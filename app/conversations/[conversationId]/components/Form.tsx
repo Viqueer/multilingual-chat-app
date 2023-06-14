@@ -45,8 +45,8 @@ const Form = () => {
     })
   }
 
-  return ( 
-    <div 
+  return (
+    <div
       className="
         py-4 
         px-4 
@@ -57,28 +57,25 @@ const Form = () => {
         gap-2 
         lg:gap-4 
         w-full
-      "
-    >
-      <CldUploadButton 
-        options={{ maxFiles: 1 }} 
-        onUpload={handleUpload} 
-        uploadPreset="pgc9ehd5"
-      >
+      ">
+      <CldUploadButton
+        options={{ maxFiles: 1 }}
+        onUpload={handleUpload}
+        uploadPreset="ypdywwef">
         <HiPhoto size={30} className="text-sky-500" />
       </CldUploadButton>
-      <form 
-        onSubmit={handleSubmit(onSubmit)} 
-        className="flex items-center gap-2 lg:gap-4 w-full"
-      >
-        <MessageInput 
-          id="message" 
-          register={register} 
-          errors={errors} 
-          required 
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex items-center gap-2 lg:gap-4 w-full">
+        <MessageInput
+          id="message"
+          register={register}
+          errors={errors}
+          required
           placeholder="Write a message"
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="
             rounded-full 
             p-2 
@@ -86,12 +83,8 @@ const Form = () => {
             cursor-pointer 
             hover:bg-sky-600 
             transition
-          "
-        >
-          <HiPaperAirplane
-            size={18}
-            className="text-white"
-          />
+          ">
+          <HiPaperAirplane size={18} className="text-white" />
         </button>
       </form>
     </div>

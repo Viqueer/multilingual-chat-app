@@ -92,6 +92,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({
               <Select
                 disabled={isLoading}
                 label="Members" 
+                isMulti
                 options={users.map((user) => ({ 
                   value: user.id, 
                   label: user.name 

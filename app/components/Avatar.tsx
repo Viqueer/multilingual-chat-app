@@ -1,21 +1,23 @@
-'use client';
+"use client";
 
 import { User } from "@prisma/client";
 
 import useActiveList from "../hooks/useActiveList";
 import Image from "next/image";
+import { default as CustomAvatar } from "react-avatar";
 
 interface AvatarProps {
   user?: User;
-};
+}
 
 const Avatar: React.FC<AvatarProps> = ({ user }) => {
   const { members } = useActiveList();
   const isActive = members.indexOf(user?.email!) !== -1;
-
   return (
     <div className="relative">
-      <div className="
+      {user?.image ? (
+        <div
+          className="
         relative 
         inline-block 
         rounded-full 
@@ -25,14 +27,19 @@ const Avatar: React.FC<AvatarProps> = ({ user }) => {
         md:h-11 
         md:w-11
       ">
-        <Image
-          fill
-          src={user?.image || '/images/placeholder.jpg'}
-          alt="Avatar"
+          <Image fill src={user?.image} alt="Avatar" />{" "}
+        </div>
+      ) : (
+        <CustomAvatar
+          name={user?.name || ""}
+          size="40px"
+          textSizeRatio={2}
+          round
         />
-      </div>
+      )}
+
       {isActive ? (
-        <span 
+        <span
           className="
             absolute 
             block 
@@ -46,11 +53,11 @@ const Avatar: React.FC<AvatarProps> = ({ user }) => {
             w-2 
             md:h-3 
             md:w-3
-          " 
+          "
         />
       ) : null}
     </div>
   );
-}
+};
 
 export default Avatar;
