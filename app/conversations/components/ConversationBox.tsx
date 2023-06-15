@@ -34,8 +34,8 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 
     return messages[messages.length - 1];
   }, [data.messages]);
-
-  const isOwn = session.data?.user?.email !== otherUser?.email;
+  console.log(lastMessage);
+  const isOwn = otherUser.id !== lastMessage?.senderId;
 
   const userEmail = useMemo(
     () => session.data?.user?.email,

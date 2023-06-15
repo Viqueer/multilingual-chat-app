@@ -26,10 +26,12 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     .join(", ");
 
   const msg = useMemo(() => {
-    return isOwn
-      ? JSON.parse(data?.body as string).original
-      : JSON.parse(data?.body as string).translated ||
-          JSON.parse(data?.body as string).original;
+    return data?.body
+      ? isOwn
+        ? JSON.parse(data?.body as string).original
+        : JSON.parse(data?.body as string).translated ||
+          JSON.parse(data?.body as string).original
+      : "";
   }, [isOwn, data]);
 
   const container = clsx("flex gap-3 p-4", isOwn && "justify-end");
