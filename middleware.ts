@@ -2,13 +2,13 @@ import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
   pages: {
-    signIn: "/",
+    // signIn: "/",
   },
 });
 
-export const config = { 
+export const config = {
   matcher: [
-    "/conversations/:path*",
-    "/users/:path*",
-  ]
+    // "/conversations/:path*",
+    // "/users/:path*",
+  ],
 };

@@ -235,7 +235,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
           ">
           <div>
             {variant === "LOGIN"
-              ? "New to Messenger?"
+              ? "New to Multilingua?"
               : "Already have an account?"}
           </div>
           <div onClick={toggleVariant} className="underline cursor-pointer">
