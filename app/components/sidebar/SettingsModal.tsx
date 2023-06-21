@@ -1,68 +1,75 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { User } from '@prisma/client';
-import { CldUploadButton } from 'next-cloudinary';
+import axios from "axios";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { User } from "@prisma/client";
+import { CldUploadButton } from "next-cloudinary";
 
 import Input from "../inputs/Input";
-import Modal from '../modals/Modal';
-import Button from '../Button';
-import Image from 'next/image';
-import { toast } from 'react-hot-toast';
+import Modal from "../modals/Modal";
+import Button from "../Button";
+import Image from "next/image";
+import { Controller } from "react-hook-form";
+import Select from "../inputs/Select";
+import { toast } from "react-hot-toast";
 
 interface SettingsModalProps {
   isOpen?: boolean;
   onClose: () => void;
   currentUser: User;
+  languages: object[];
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  currentUser = {}
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  languages,
+  currentUser = {},
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(currentUser, '&TEST_CURRENT_USER')
+  console.log(currentUser, "&TEST_CURRENT_USER");
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: {
-      errors,
-    }
+    control,
+    formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
       name: currentUser?.name,
-      image: currentUser?.image
-    }
+      image: currentUser?.image,
+    },
   });
 
-  const image = watch('image');
+  const image = watch("image");
 
   const handleUpload = (result: any) => {
-    setValue('image', result.info.secure_url, { 
-      shouldValidate: true 
+    setValue("image", result.info.secure_url, {
+      shouldValidate: true,
     });
-  }
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    axios.post('/api/settings', data)
-    .then(() => {
-      router.refresh();
-      onClose();
-    })
-    .catch(() => toast.error('Something went wrong!'))
-    .finally(() => setIsLoading(false));
-  }
+    axios
+      .post("/api/settings", data)
+      .then(() => {
+        router.refresh();
+        onClose();
+      })
+      .catch(() => toast.error("Something went wrong!"))
+      .finally(() => setIsLoading(false));
+  };
+
+  const primaryLanguage = watch("primaryLanguage");
+  const language = JSON.parse(currentUser?.primaryLanguage as string).label;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -90,6 +97,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 errors={errors}
                 required
                 register={register}
+              />
+              <Controller
+                name="primaryLanguage"
+                control={control}
+                render={() => (
+                  <Select
+                    disabled={isLoading}
+                    register={register}
+                    errors={errors}
+                    label="Primary Language"
+                    value={primaryLanguage}
+                    placeholder={language}
+                    onChange={(value) =>
+                      setValue("primaryLanguage", value, {
+                        shouldValidate: true,
+                      })
+                    }
+                    options={languages?.map((lang: any) => ({
+                      value: lang.code,
+                      label: lang.name,
+                    }))}
+                  />
+                )}
               />
               <div>
                 <label
@@ -145,6 +175,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       </form>
     </Modal>
   );
-}
+};
 
 export default SettingsModal;

@@ -14,6 +14,7 @@ interface SelectProps {
   register?: UseFormRegister<FieldValues>;
   errors?: FieldErrors;
   otherProps?: SelectProps;
+  placeholder?: string;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -24,6 +25,7 @@ const Select: React.FC<SelectProps> = ({
   disabled,
   isMulti,
   otherProps,
+  placeholder,
 }) => {
   return (
     <>
@@ -74,6 +76,7 @@ const Select: React.FC<SelectProps> = ({
               isDisabled={disabled}
               value={value}
               onChange={onChange}
+              placeholder={placeholder || "Select Language..."}
               options={options}
               classNames={{
                 control: () => "text-sm",

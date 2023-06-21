@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { FullMessageType } from "@/app/types";
+import { MdTranslate } from "react-icons/md";
 
 import Avatar from "@/app/components/Avatar";
 import ImageModal from "./ImageModal";
@@ -18,6 +19,7 @@ interface MessageBoxProps {
 const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
   const session = useSession();
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [seeOriginal, setSeeOriginal] = useState(false);
 
   const isOwn = session.data?.user?.email === data?.sender?.email;
   const seenList = (data.seen || [])
@@ -29,24 +31,37 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     return data?.body
       ? isOwn
         ? JSON.parse(data?.body as string).original
+        : seeOriginal
+        ? JSON.parse(data?.body as string).original
         : JSON.parse(data?.body as string).translated ||
           JSON.parse(data?.body as string).original
       : "";
-  }, [isOwn, data]);
+  }, [isOwn, data, seeOriginal]);
 
   const container = clsx("flex gap-3 p-4", isOwn && "justify-end");
   const avatar = clsx(isOwn && "order-2");
   const body = clsx("flex flex-col gap-2", isOwn && "items-end");
   const message = clsx(
     "text-sm w-fit overflow-hidden",
-    isOwn ? "bg-sky-500 text-white" : "bg-gray-100",
+    isOwn
+      ? "bg-sky-500 text-white"
+      : seeOriginal
+      ? "bg-green-300"
+      : "bg-gray-100",
     data.image ? "rounded-md p-0" : "rounded-full py-2 px-3"
   );
 
   return (
     <div className={container}>
-      <div className={avatar}>
+      <div className={`${avatar} justify-center`}>
         <Avatar user={data.sender} />
+        {!isOwn && (
+          <div
+            onClick={() => setSeeOriginal(!seeOriginal)}
+            className="cursor-pointer p-1 my-1 bg-gray-100 hover:bg-gray-300 rounded-full flex justify-center align-middle">
+            <MdTranslate />
+          </div>
+        )}
       </div>
       <div className={body}>
         <div className="flex items-center gap-1">
@@ -77,7 +92,9 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
               "
             />
           ) : (
-            <div>{msg}</div>
+            <>
+              <div className="relative flex align-bottom">{msg}</div>
+            </>
           )}
         </div>
         {isLast && isOwn && seenList.length > 0 && (
