@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 // import { BsGithub, BsGoogle } from "react-icons/bs";
 import {
   FieldValues,
@@ -17,6 +17,7 @@ import Select from "@/app/components/inputs/Select";
 // import AuthSocialButton from "./AuthSocialButton";
 import Button from "@/app/components/Button";
 import { toast } from "react-hot-toast";
+import TranslationContext from "@/app/context/TranslationContext";
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -29,6 +30,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
+  const translation = useContext(TranslationContext);
 
   useEffect(() => {
     if (session?.status === "authenticated") {
@@ -74,14 +76,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
         )
         .then((callback) => {
           if (callback?.error) {
-            toast.error("Invalid credentials!");
+            toast.error(translation?.error.error1);
           }
 
           if (callback?.ok) {
             router.push("/conversations");
+            localStorage.setItem("language", data.primaryLanguage.value);
+            window.location.reload();
           }
         })
-        .catch(() => toast.error("Something went wrong!"))
+        .catch(() => toast.error(translation?.error.error2))
         .finally(() => setIsLoading(false));
     }
 
@@ -92,7 +96,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
       })
         .then((callback) => {
           if (callback?.error) {
-            toast.error("Invalid credentials!");
+            toast.error(translation?.error.error1);
           }
 
           if (callback?.ok) {
@@ -140,7 +144,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
               errors={errors}
               required
               id="name"
-              label="Name"
+              label={translation?.general.name}
             />
           )}
           <Input
@@ -149,7 +153,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
             errors={errors}
             required
             id="email"
-            label="Email address"
+            label={translation?.general.email}
             type="email"
           />
           <Input
@@ -158,7 +162,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
             errors={errors}
             required
             id="password"
-            label="Password"
+            label={translation?.authForm.passwordFormLabel}
             type="password"
           />
           {variant === "REGISTER" && (
@@ -171,7 +175,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
                   disabled={isLoading}
                   register={register}
                   errors={errors}
-                  label="Primary Language"
+                  label={translation?.general.language}
+                  placeholder={translation?.authForm.selectLanguage}
                   value={primaryLanguage}
                   onChange={(value) =>
                     setValue("primaryLanguage", value, {
@@ -188,7 +193,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
           )}
           <div>
             <Button disabled={isLoading} fullWidth type="submit">
-              {variant === "LOGIN" ? "Sign in" : "Register"}
+              {variant === "LOGIN"
+                ? translation?.authForm.signIn
+                : translation?.authForm.register}
             </Button>
           </div>
         </form>
@@ -235,11 +242,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ languages }) => {
           ">
           <div>
             {variant === "LOGIN"
-              ? "New to Multilingua?"
-              : "Already have an account?"}
+              ? `${translation?.authForm.newTo} Multilingua?`
+              : translation?.authForm.alreadyHaveAccount}
           </div>
           <div onClick={toggleVariant} className="underline cursor-pointer">
-            {variant === "LOGIN" ? "Create an account" : "Login"}
+            {variant === "LOGIN"
+              ? translation?.authForm.createAccount
+              : translation?.authForm.login}
           </div>
         </div>
       </div>

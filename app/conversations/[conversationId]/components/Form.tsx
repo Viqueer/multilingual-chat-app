@@ -1,49 +1,42 @@
-'use client';
-
-import { 
-  HiPaperAirplane, 
-  HiPhoto
-} from "react-icons/hi2";
+"use client";
+import { useContext } from "react";
+import { HiPaperAirplane, HiPhoto } from "react-icons/hi2";
 import MessageInput from "./MessageInput";
-import { 
-  FieldValues, 
-  SubmitHandler, 
-  useForm 
-} from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { CldUploadButton } from "next-cloudinary";
 import useConversation from "@/app/hooks/useConversation";
+import TranslationContext from "@/app/context/TranslationContext";
 
 const Form = () => {
   const { conversationId } = useConversation();
+  const translations = useContext(TranslationContext);
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: {
-      errors,
-    }
+    formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      message: ''
-    }
+      message: "",
+    },
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setValue('message', '', { shouldValidate: true });
-    axios.post('/api/messages', {
+    setValue("message", "", { shouldValidate: true });
+    axios.post("/api/messages", {
       ...data,
-      conversationId: conversationId
-    })
-  }
+      conversationId: conversationId,
+    });
+  };
 
   const handleUpload = (result: any) => {
-    axios.post('/api/messages', {
+    axios.post("/api/messages", {
       image: result.info.secure_url,
-      conversationId: conversationId
-    })
-  }
+      conversationId: conversationId,
+    });
+  };
 
   return (
     <div
@@ -72,7 +65,7 @@ const Form = () => {
           register={register}
           errors={errors}
           required
-          placeholder="Write a message"
+          placeholder={translations?.messages.messageInputPlaceholder}
         />
         <button
           type="submit"
@@ -89,6 +82,6 @@ const Form = () => {
       </form>
     </div>
   );
-}
- 
+};
+
 export default Form;

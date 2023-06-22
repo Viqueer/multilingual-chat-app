@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useState, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { IoClose, IoTrash } from "react-icons/io5";
 import { Conversation, User } from "@prisma/client";
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 
 import useOtherUser from "@/app/hooks/useOtherUser";
 import useActiveList from "@/app/hooks/useActiveList";
+import TranslationContext from "@/app/context/TranslationContext";
 
 import Avatar from "@/app/components/Avatar";
 import AvatarGroup from "@/app/components/AvatarGroup";
@@ -44,14 +45,22 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
   const { members } = useActiveList();
   const isActive = members.indexOf(otherUser?.email!) !== -1;
+  const translations = useContext(TranslationContext);
 
   const statusText = useMemo(() => {
     if (data.isGroup) {
       return `${data.users.length} members`;
     }
 
-    return isActive ? "Active" : "Offline";
-  }, [data, isActive]);
+    return isActive
+      ? translations?.messages.active
+      : translations?.messages.offline;
+  }, [
+    data,
+    isActive,
+    translations?.messages.active,
+    translations?.messages.offline,
+  ]);
 
   return (
     <>
@@ -119,7 +128,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                 <IoTrash size={20} />
                               </div>
                               <div className="text-sm font-light text-neutral-600">
-                                Delete
+                                {translations?.messages.delete}
                               </div>
                             </div>
                           </div>
@@ -135,7 +144,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                   sm:w-40 
                                   sm:flex-shrink-0
                                 ">
-                                    Emails
+                                    {translations?.general.email}
                                   </dt>
                                   <dd
                                     className="
@@ -160,7 +169,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                   sm:w-40 
                                   sm:flex-shrink-0
                                 ">
-                                    Email
+                                    {translations?.general.email}
                                   </dt>
                                   <dd
                                     className="
@@ -185,7 +194,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                     sm:w-40 
                                     sm:flex-shrink-0
                                   ">
-                                      Primary Language
+                                      {translations?.general.language}
                                     </dt>
                                     <dd
                                       className="
@@ -207,7 +216,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                     sm:w-40 
                                     sm:flex-shrink-0
                                   ">
-                                      Joined
+                                      {translations?.messages.joined}
                                     </dt>
                                     <dd
                                       className="

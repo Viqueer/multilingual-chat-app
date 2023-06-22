@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { User } from "@prisma/client";
@@ -14,6 +14,7 @@ import Image from "next/image";
 import { Controller } from "react-hook-form";
 import Select from "../inputs/Select";
 import { toast } from "react-hot-toast";
+import TranslationContext from "@/app/context/TranslationContext";
 
 interface SettingsModalProps {
   isOpen?: boolean;
@@ -31,7 +32,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(currentUser, "&TEST_CURRENT_USER");
+  const translations = useContext(TranslationContext);
 
   const {
     register,
@@ -61,8 +62,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     axios
       .post("/api/settings", data)
       .then(() => {
+        localStorage.setItem("language", data.primaryLanguage.value);
         router.refresh();
         onClose();
+        window.location.reload();
       })
       .catch(() => toast.error("Something went wrong!"))
       .finally(() => setIsLoading(false));
@@ -83,16 +86,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 leading-7 
                 text-gray-900
               ">
-              Profile
+              {translations?.settings.header}
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Edit your public information.
+              {translations?.settings.subHeader}
             </p>
 
             <div className="mt-10 flex flex-col gap-y-8">
               <Input
                 disabled={isLoading}
-                label="Name"
+                label={translations?.general.name}
                 id="name"
                 errors={errors}
                 required
@@ -106,7 +109,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     disabled={isLoading}
                     register={register}
                     errors={errors}
-                    label="Primary Language"
+                    label={translations?.general.language}
                     value={primaryLanguage}
                     placeholder={language}
                     onChange={(value) =>
@@ -148,7 +151,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     onUpload={handleUpload}
                     uploadPreset="ypdywwef">
                     <Button disabled={isLoading} secondary type="button">
-                      Change
+                      {translations?.settings.change}
                     </Button>
                   </CldUploadButton>
                 </div>
@@ -166,10 +169,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             gap-x-6
           ">
           <Button disabled={isLoading} secondary onClick={onClose}>
-            Cancel
+            {translations?.settings.cancel}
           </Button>
           <Button disabled={isLoading} type="submit">
-            Save
+            {translations?.settings.save}
           </Button>
         </div>
       </form>

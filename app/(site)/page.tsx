@@ -1,5 +1,6 @@
 import Image from "next/image";
 import AuthForm from "./components/AuthForm";
+import Header from "./components/Header";
 import { listLanguages } from "../actions/getTranslation";
 
 const Auth = async () => {
@@ -24,17 +25,7 @@ const Auth = async () => {
           src="/images/logo2.png"
           alt="Logo"
         />
-        <h2
-          className="
-            mt-6 
-            text-center 
-            text-3xl 
-            font-bold 
-            tracking-tight 
-            text-gray-900
-          ">
-          Sign in to your account
-        </h2>
+        <Header />
       </div>
       <AuthForm languages={languages} />
     </div>
